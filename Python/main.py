@@ -7,7 +7,7 @@ def main():
     # Lista de tramas de prueba
     test_frames = ["110101", "100110", "111000"]
 
-    print("Pruebas para el Código de Hamming:")
+    print("\n\n\nPruebas para el Código de Hamming:")
     for frame in test_frames:
         print(f"Trama original: {frame}")
         encoded_frame_hamming = he.hamming_encoder(frame)
@@ -39,7 +39,7 @@ def main_with_errors():
         ("11100011001011001111000100001011111110", "Trama con error en el último bit")
     ]
 
-    print("Pruebas con errores para el Código de Hamming:")
+    print("\n\n\nPruebas con errores para el Código de Hamming:")
     for frame, description in test_frames_hamming:
         print(description)
         decoded_frame_hamming, message_hamming = hd.hamming_decoder(frame)

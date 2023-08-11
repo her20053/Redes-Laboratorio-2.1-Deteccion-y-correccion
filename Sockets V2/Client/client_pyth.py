@@ -28,7 +28,7 @@ def codificar_crc32_binario(mensaje):
     crc_binario = format(crc_value, '032b')  # Convertir a binario de 32 bits
     return mensaje + crc_binario  # Concatenamos el CRC-32 al final del mensaje
 
-def agregar_ruido(mensaje_binario, umbral=0.01):
+def agregar_ruido(mensaje_binario, umbral=0.005):
     mensaje_ruidoso = []
     for bit in mensaje_binario:
         if random.random() < umbral:
@@ -82,7 +82,9 @@ def simular_mensajes():
     # Preguntar al usuario cuántas letras quiere en la cadena aleatoria
     longitud_mensaje = int(input("Introduce la cantidad de letras para el mensaje aleatorio: "))
     
-    for i in range(10):
+    for i in range(10000):
+
+        print("Enviando mensaje", i+1)
 
         # Generar una cadena aleatoria con esa cantidad de letras
         payload = generar_cadena_aleatoria(longitud_mensaje)
@@ -119,7 +121,7 @@ def simular_mensajes():
             file.write(payload + "\n")
         
         # Pausa de 0.2 segundos
-        time.sleep(0.2)
+        time.sleep(0.1)
 
 
 def mostrar_menu():

@@ -3,6 +3,8 @@ import zlib
 import random
 import string
 import time
+import base64
+import os
 
 
 HOST = "127.0.0.1"
@@ -28,7 +30,7 @@ def codificar_crc32_binario(mensaje):
     crc_binario = format(crc_value, '032b')  # Convertir a binario de 32 bits
     return mensaje + crc_binario  # Concatenamos el CRC-32 al final del mensaje
 
-def agregar_ruido(mensaje_binario, umbral=0.005):
+def agregar_ruido(mensaje_binario, umbral=0.05):
     mensaje_ruidoso = []
     for bit in mensaje_binario:
         if random.random() < umbral:
@@ -72,17 +74,25 @@ def enviar_mensaje():
         # Conectamos al servidor
         s.connect((HOST, PORT))
         print(" + Enviando Data\n")
-        # Enviamos el mensaje
-        s.sendall(mensaje_final.encode())
+        mensaje_original_encoded = base64.b64encode(payload.encode()).decode()
+        mensaje_a_enviar = mensaje_final + "|" + mensaje_original_encoded
+        s.sendall(mensaje_a_enviar.encode())
         print(" + Data enviada\n")
 
 def simular_mensajes():
+
     codificacion = preguntar_codificacion()
     
     # Preguntar al usuario cuántas letras quiere en la cadena aleatoria
     longitud_mensaje = int(input("Introduce la cantidad de letras para el mensaje aleatorio: "))
-    
-    for i in range(10000):
+    cantidad_iteraci = int(input("Introduce la cantidad de iteraciones: "))
+    porcentaje_error = float(input("Introduce el porcentaje de error: "))
+
+    archivo_a_eliminar = "../simulacion.txt"
+    if os.path.exists(archivo_a_eliminar):
+        os.remove(archivo_a_eliminar)
+
+    for i in range(cantidad_iteraci):
 
         print("Enviando mensaje", i+1)
 
@@ -91,7 +101,7 @@ def simular_mensajes():
         print("Mensaje aleatorio generado:", payload)
         
         payload_binario = string_a_binario(payload)
-        payload_binario = agregar_ruido(payload_binario)
+        payload_binario = agregar_ruido(payload_binario, umbral=porcentaje_error)
         
         prefijo = ""
         if codificacion == "1":
@@ -113,15 +123,14 @@ def simular_mensajes():
             s.connect((HOST, PORT))
             print(" + Enviando Data\n")
             # Enviamos el mensaje
-            s.sendall(mensaje_final.encode())
+
+            mensaje_original_encoded = base64.b64encode(payload.encode()).decode()
+            mensaje_a_enviar = mensaje_final + "|" + mensaje_original_encoded
+            s.sendall(mensaje_a_enviar.encode())
             print(" + Data enviada\n")
         
-        # Escribir en el archivo
-        with open("../simulacion.txt", "a") as file:
-            file.write(payload + "\n")
-        
         # Pausa de 0.2 segundos
-        time.sleep(0.1)
+        time.sleep(0.05)
 
 
 def mostrar_menu():
